@@ -1,4 +1,4 @@
-package com.sollian.bottomsheetdialog;
+package com.sollian.library;
 
 import org.junit.Test;
 

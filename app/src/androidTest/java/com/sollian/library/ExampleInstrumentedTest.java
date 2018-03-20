@@ -1,4 +1,4 @@
-package com.sollian.bottomsheetdialog;
+package com.sollian.library;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.sollian.bottomsheetdialog", appContext.getPackageName());
+        assertEquals("com.sollian.library", appContext.getPackageName());
     }
 }
