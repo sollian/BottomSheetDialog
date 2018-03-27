@@ -17,7 +17,7 @@ public class PanelInputDialogFragment extends BaseBottomSheetDialogFragment {
     protected static final int STATE_KEYBOARD = 1;
     protected static final int STATE_EMOJI = 2;
 
-    private int state = STATE_DEFAULT;
+    private int state;
 
     private KeyboardObserver keyboardObserver;
 
@@ -30,8 +30,8 @@ public class PanelInputDialogFragment extends BaseBottomSheetDialogFragment {
         super.onActivityCreated(savedInstanceState);
         Window window = getDialog().getWindow();
         if (window != null) {
-            Util.setStatusBarTransparent(window);
-            vRoot.setFitsSystemWindows(true);
+//            Util.setStatusBarTransparent(window);
+//            vRoot.setFitsSystemWindows(true);
 
             window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
@@ -44,6 +44,8 @@ public class PanelInputDialogFragment extends BaseBottomSheetDialogFragment {
         vRoot = root;
         vPanel = panel;
         vEdit = editText;
+
+        state = STATE_DEFAULT;
 
         vRoot.setOnClickListener(new View.OnClickListener() {
             @Override

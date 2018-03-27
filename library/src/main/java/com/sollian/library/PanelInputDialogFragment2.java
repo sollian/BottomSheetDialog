@@ -17,7 +17,7 @@ public class PanelInputDialogFragment2 extends BaseBottomSheetDialogFragment {
     protected static final int STATE_KEYBOARD = 1;
     protected static final int STATE_EMOJI = 2;
 
-    private int state = STATE_DEFAULT;
+    private int state;
 
     private KeyboardObserver keyboardObserver;
 
@@ -29,6 +29,8 @@ public class PanelInputDialogFragment2 extends BaseBottomSheetDialogFragment {
         vRoot = root;
         vPanel = panel;
         vEdit = editText;
+
+        state = STATE_DEFAULT;
 
         vEdit.setOnClickListener(new View.OnClickListener() {
             @Override
