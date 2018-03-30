@@ -55,7 +55,12 @@ public class PanelInputDialogFragment2 extends BaseBottomSheetDialogFragment {
                     }
                 }
 
-                updateWindowOffset(0);
+                Util.postDelayed2UI(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateWindowOffset(0);
+                    }
+                }, 0);
             }
 
             @Override
