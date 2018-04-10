@@ -50,6 +50,14 @@ public class PanelInputDialogFragment2 extends BaseBottomSheetDialogFragment {
             }
         });
 
+        vEdit.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                changeState(STATE_KEYBOARD);
+                return false;
+            }
+        });
+
         keyboardObserver = new KeyboardObserver();
         keyboardObserver.setTarget(vRoot, new OnKeyboardChangeListener() {
             @Override
