@@ -33,7 +33,8 @@ public class PanelInputDialogFragment extends BaseBottomSheetDialogFragment {
 //            Util.setStatusBarTransparent(window);
 //            vRoot.setFitsSystemWindows(true);
 
-            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
+                    | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
             window.setGravity(Gravity.TOP);
             window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);

@@ -1,5 +1,6 @@
 package com.sollian.library;
 
+import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -24,6 +25,16 @@ public class PanelInputDialogFragment2 extends BaseBottomSheetDialogFragment {
     private View vRoot;
     private PanelFrameLayout vPanel;
     private EditText vEdit;
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Window window = getDialog().getWindow();
+        if (window != null) {
+            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN
+                    | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        }
+    }
 
     protected void init(View root, PanelFrameLayout panel, EditText editText) {
         vRoot = root;
