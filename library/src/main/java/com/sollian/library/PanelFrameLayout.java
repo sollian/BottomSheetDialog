@@ -27,8 +27,12 @@ public class PanelFrameLayout extends FrameLayout {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec,
-                View.MeasureSpec.makeMeasureSpec(isShowing ? panelHeight : 0, View.MeasureSpec.EXACTLY));
+        if (isShowing) {
+            super.onMeasure(widthMeasureSpec,
+                    MeasureSpec.makeMeasureSpec(panelHeight, MeasureSpec.EXACTLY));
+        } else {
+            setMeasuredDimension(getWidth(), 0);
+        }
 
     }
 

@@ -18,7 +18,7 @@ import com.sollian.library.PanelInputDialogFragment2;
  * @author sollian on 2018/3/20.
  */
 
-public class PanelFragment extends PanelInputDialogFragment2 implements View.OnClickListener {
+public class PanelFragment extends PanelInputDialogFragment implements View.OnClickListener {
     private Button vBt;
 
     @Nullable
