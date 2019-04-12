@@ -1,6 +1,7 @@
 package com.sollian.library;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -30,9 +31,16 @@ public class BaseBottomSheetDialogFragment extends DialogFragment {
     private DialogInterface.OnDismissListener dismissListener;
     private boolean isShowing;
 
+    @Override
+    @NonNull
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        setStyle(STYLE_NO_TITLE, 0);
+        return new MyDialog(getActivity(), getTheme());
+    }
+
     @CallSuper
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         vRoot = view;
         vRoot.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -45,8 +53,6 @@ public class BaseBottomSheetDialogFragment extends DialogFragment {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        //需要在setContentView()之前设置
-        getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
         //父类方法中调用了setContentView()
         super.onActivityCreated(savedInstanceState);
 
@@ -56,16 +62,47 @@ public class BaseBottomSheetDialogFragment extends DialogFragment {
             window.setGravity(Gravity.BOTTOM);
             window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
             window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            window.getDecorView().setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                        dismiss();
+            if (allowDismissWhenTouchOutside()) {
+                window.getDecorView().setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                            dismiss();
+                        }
+                        return true;
                     }
-                    return true;
-                }
-            });
+                });
+            }
+
+            if (needTransparentBackground()) {
+                WindowManager.LayoutParams params = window.getAttributes();
+                params.dimAmount = 0;
+                window.setAttributes(params);
+            }
         }
+    }
+
+    /**
+     * 是否允许在TouchOutside的时候消失
+     */
+    protected boolean allowDismissWhenTouchOutside() {
+        return true;
+    }
+
+    /**
+     * 是否需要无色透明背景
+     */
+    protected boolean needTransparentBackground() {
+        return false;
+    }
+
+    /**
+     * 是否要隐藏NavigationBar
+     * <p>
+     * ps:statusbar可同理实现
+     */
+    protected boolean needHideNavigationBar() {
+        return false;
     }
 
     @Override
@@ -89,7 +126,6 @@ public class BaseBottomSheetDialogFragment extends DialogFragment {
             try {
                 super.show(manager, tag);
             } catch (Exception e) {
-                e.printStackTrace();
                 FragmentTransaction ft = manager.beginTransaction();
                 ft.add(this, tag);
                 ft.commitAllowingStateLoss();
@@ -125,7 +161,8 @@ public class BaseBottomSheetDialogFragment extends DialogFragment {
 
         Util.hideKeyboard(dialog.getCurrentFocus());
         isShowing = false;
-        slideToDown(vRoot);
+
+        getDialog().dismiss();
     }
 
     @Override
@@ -153,7 +190,7 @@ public class BaseBottomSheetDialogFragment extends DialogFragment {
         view.startAnimation(slide);
     }
 
-    private void slideToDown(View view) {
+    private void slideToDown(final MyDialog dialog, View view) {
         Animation slide = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f,
                 Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF,
                 0.0f, Animation.RELATIVE_TO_SELF, 1.0f);
@@ -161,9 +198,6 @@ public class BaseBottomSheetDialogFragment extends DialogFragment {
         slide.setDuration(300);
         slide.setFillAfter(true);
         slide.setFillEnabled(true);
-        view.clearAnimation();
-        view.startAnimation(slide);
-
         slide.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
@@ -171,12 +205,49 @@ public class BaseBottomSheetDialogFragment extends DialogFragment {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                BaseBottomSheetDialogFragment.super.dismissAllowingStateLoss();
+                dialog.superDismiss();
             }
 
             @Override
             public void onAnimationRepeat(Animation animation) {
             }
         });
+
+        view.clearAnimation();
+        view.startAnimation(slide);
+    }
+
+    /**
+     * 解决按返回键不能展示退出动画的问题
+     */
+    private class MyDialog extends Dialog {
+        MyDialog(@NonNull Context context, int themeResId) {
+            super(context, themeResId);
+        }
+
+        @Override
+        public void dismiss() {
+            slideToDown(this, vRoot);
+        }
+
+        void superDismiss() {
+            super.dismiss();
+        }
+
+        @Override
+        public void show() {
+            if (needHideNavigationBar()) {
+                //为了防止在Activity隐藏了NavigationBar的情况下，
+                // 弹出DialogFragment时会短暂性的显示一下NavigationBar
+                Window window = getWindow();
+                window.setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+                super.show();
+                Util.hideNavigationBar(window);
+                window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+            } else {
+                super.show();
+            }
+        }
     }
 }

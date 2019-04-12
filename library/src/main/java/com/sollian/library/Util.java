@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
@@ -26,7 +27,7 @@ public class Util {
     private static final Handler handler = new Handler(Looper.getMainLooper());
     private static int sStatusBarHeight = -1;
 
-    public static void init(Application context){
+    public static void init(Application context) {
         Util.context = context;
         ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE))
                 .getDefaultDisplay().getMetrics(sDisplayMetrics);
@@ -64,7 +65,7 @@ public class Util {
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.getDecorView().setSystemUiVisibility(
                     View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
             );
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(Color.TRANSPARENT);
@@ -104,5 +105,23 @@ public class Util {
         }
 
         return sStatusBarHeight;
+    }
+
+    public static void hideNavigationBar(@NonNull Window window) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            View decorView = window.getDecorView();
+            int uiFlags = decorView.getSystemUiVisibility(); // hide status bar
+            uiFlags = View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                uiFlags |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+            } else {
+                uiFlags |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
+            }
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                uiFlags |= View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+            }
+            decorView.setSystemUiVisibility(uiFlags);
+        }
     }
 }
