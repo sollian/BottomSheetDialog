@@ -9,13 +9,22 @@ import android.widget.EditText;
 
 /**
  * 适配性高，但ui交互欠友好
+ *
  * @author sollian on 2018/3/6.
  */
 
 public class PanelInputDialogFragment extends BaseBottomSheetDialogFragment {
+
+    /**
+     * 非法状态
+     */
+    protected static final int STATE_INVALID = -1;
+    /**
+     * panel和软键盘都隐藏
+     */
     protected static final int STATE_DEFAULT = 0;
     protected static final int STATE_KEYBOARD = 1;
-    protected static final int STATE_EMOJI = 2;
+    protected static final int STATE_PANEL = 2;
 
     private int state;
 
@@ -48,19 +57,9 @@ public class PanelInputDialogFragment extends BaseBottomSheetDialogFragment {
 
         state = STATE_DEFAULT;
 
-        vRoot.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-            }
-        });
-
-        vEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                changeState(STATE_KEYBOARD);
-            }
-        });
+        View.OnClickListener clickListener = new MyOnClickListener();
+        vRoot.setOnClickListener(clickListener);
+        vEdit.setOnClickListener(clickListener);
 
         keyboardObserver = new KeyboardObserver();
         keyboardObserver.setTarget(vRoot, new OnKeyboardChangeListener() {
@@ -92,15 +91,21 @@ public class PanelInputDialogFragment extends BaseBottomSheetDialogFragment {
         return state;
     }
 
-    protected void changeState(int state) {
-        if (this.state == state) {
-            return;
+    protected void changeState(int newState) {
+        int oldState = state;
+        state = newState;
+        beforeStateChange(oldState, newState);
+
+        if (oldState != newState) {
+            performChangeState(oldState, newState);
         }
-        onStateChange(this.state, state);
-        switch (state) {
-            case STATE_EMOJI:
+    }
+
+    private void performChangeState(int oldState, int newState) {
+        switch (newState) {
+            case STATE_PANEL:
                 vPanel.setShowing(true);
-                if (this.state == STATE_DEFAULT) {
+                if (oldState == STATE_DEFAULT) {
                     vPanel.requestLayout();
                 } else {
                     Util.hideKeyboard(vEdit);
@@ -117,16 +122,28 @@ public class PanelInputDialogFragment extends BaseBottomSheetDialogFragment {
             default:
                 break;
         }
-        this.state = state;
     }
 
-    protected void onStateChange(int oldState, int newState) {
-
+    protected void beforeStateChange(int oldState, int newState) {
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        keyboardObserver.setTarget(null, null);
+    public void onDestroy() {
+        super.onDestroy();
+        if (keyboardObserver != null) {
+            keyboardObserver.setTarget(null, null);
+        }
+    }
+
+    private class MyOnClickListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            if (v == vRoot) {
+                dismiss();
+            } else if (v == vEdit) {
+                changeState(STATE_KEYBOARD);
+            }
+        }
     }
 }

@@ -3,8 +3,6 @@ package com.sollian.library;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
@@ -19,14 +17,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
 
 /**
  * @author sollian on 2018/2/3.
  */
 
 public class BaseBottomSheetDialogFragment extends DialogFragment {
+
     private View vRoot;
     private DialogInterface.OnDismissListener dismissListener;
     private boolean isShowing;
@@ -47,7 +44,6 @@ public class BaseBottomSheetDialogFragment extends DialogFragment {
             public void onClick(View v) {
             }
         });
-        slideToUp(view);
         isShowing = true;
     }
 
@@ -61,7 +57,11 @@ public class BaseBottomSheetDialogFragment extends DialogFragment {
         if (window != null) {
             window.setGravity(Gravity.BOTTOM);
             window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
-            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            //没有这句，背景不会透明的
+            window.setBackgroundDrawableResource(android.R.color.transparent);
+            //android 11会给dialog添加padding
+            window.getDecorView().setPadding(0, 0, 0, 0);
+            window.setWindowAnimations(R.style.bottom_sheet_dialog);
             if (allowDismissWhenTouchOutside()) {
                 window.getDecorView().setOnTouchListener(new View.OnTouchListener() {
                     @Override
@@ -178,60 +178,13 @@ public class BaseBottomSheetDialogFragment extends DialogFragment {
         this.dismissListener = dismissListener;
     }
 
-    private void slideToUp(View view) {
-        Animation slide = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f,
-                Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF,
-                1.0f, Animation.RELATIVE_TO_SELF, 0.0f);
-
-        slide.setDuration(300);
-        slide.setFillAfter(true);
-        slide.setFillEnabled(true);
-        view.clearAnimation();
-        view.startAnimation(slide);
-    }
-
-    private void slideToDown(final MyDialog dialog, View view) {
-        Animation slide = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f,
-                Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF,
-                0.0f, Animation.RELATIVE_TO_SELF, 1.0f);
-
-        slide.setDuration(300);
-        slide.setFillAfter(true);
-        slide.setFillEnabled(true);
-        slide.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                dialog.superDismiss();
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-        });
-
-        view.clearAnimation();
-        view.startAnimation(slide);
-    }
-
     /**
      * 解决按返回键不能展示退出动画的问题
      */
     private class MyDialog extends Dialog {
+
         MyDialog(@NonNull Context context, int themeResId) {
             super(context, themeResId);
-        }
-
-        @Override
-        public void dismiss() {
-            slideToDown(this, vRoot);
-        }
-
-        void superDismiss() {
-            super.dismiss();
         }
 
         @Override

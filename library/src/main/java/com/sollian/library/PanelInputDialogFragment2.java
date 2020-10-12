@@ -12,7 +12,7 @@ import android.widget.EditText;
  *
  * @author sollian on 2018/3/6.
  */
-
+@Deprecated
 public class PanelInputDialogFragment2 extends BaseBottomSheetDialogFragment {
     protected static final int STATE_DEFAULT = 0;
     protected static final int STATE_KEYBOARD = 1;

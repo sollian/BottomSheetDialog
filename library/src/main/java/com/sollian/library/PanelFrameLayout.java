@@ -1,15 +1,18 @@
 package com.sollian.library;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 /**
+ * 面板的容器
+ *
  * @author sollian on 2018/3/2.
  */
 public class PanelFrameLayout extends FrameLayout {
+
     private boolean isShowing;
     private int panelHeight;
 
@@ -17,11 +20,11 @@ public class PanelFrameLayout extends FrameLayout {
         super(context);
     }
 
-    public PanelFrameLayout(Context context, @Nullable AttributeSet attrs) {
+    public PanelFrameLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public PanelFrameLayout(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public PanelFrameLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
@@ -42,5 +45,16 @@ public class PanelFrameLayout extends FrameLayout {
 
     public void setShowing(boolean showing) {
         isShowing = showing;
+    }
+
+    /**
+     * 该方法添加View，preventRequestLayout==true时不会触发requestLayout调用
+     */
+    @Override
+    public boolean addViewInLayout(View child,
+            int index,
+            ViewGroup.LayoutParams params,
+            boolean preventRequestLayout) {
+        return super.addViewInLayout(child, index, params, preventRequestLayout);
     }
 }

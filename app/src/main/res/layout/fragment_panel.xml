@@ -8,32 +8,38 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
+        android:background="#fff"
         android:orientation="vertical">
 
-        <EditText
+        <com.sollian.bottomsheetdialog.widget.ListenFocusEditText
             android:id="@+id/edit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text" />
 
-        <Button
-            android:id="@+id/btn"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="打开面板" />
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/open_panel_emotion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:text="打开表情面板" />
+
+            <Button
+                android:id="@+id/open_panel_gif"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:text="打开gif面板" />
+        </LinearLayout>
 
         <com.sollian.library.PanelFrameLayout
             android:id="@+id/panel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:layout_height="200dp">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#fcc"
-                android:gravity="center"
-                android:text="我是表情面板" />
-        </com.sollian.library.PanelFrameLayout>
+            tools:layout_height="200dp" />
     </LinearLayout>
 </FrameLayout>

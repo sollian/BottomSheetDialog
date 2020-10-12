@@ -7,13 +7,13 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-
 import java.lang.reflect.Field;
 
 /**
@@ -21,6 +21,7 @@ import java.lang.reflect.Field;
  */
 
 public class Util {
+
     private static Application context;
 
     private static final DisplayMetrics sDisplayMetrics = new DisplayMetrics();
@@ -123,5 +124,9 @@ public class Util {
             }
             decorView.setSystemUiVisibility(uiFlags);
         }
+    }
+
+    public static int getScreenWidth(Context context) {
+        return context.getResources().getDisplayMetrics().widthPixels;
     }
 }
